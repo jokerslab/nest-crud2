@@ -1,0 +1,1 @@
+{"version":3,"file":"crud.decorator.js","sourceRoot":"","sources":["../../src/decorators/crud.decorator.ts"],"names":[],"mappings":";;;AAAA,kCAA4C;AAGrC,MAAM,IAAI,GACf,CAAC,OAAoB,EAAE,EAAE,CACzB,CAAC,MAAe,EAAQ,EAAE;IACxB,MAAM,aAAa,GAAG,OAAO,CAAC,aAAa,IAAI,wBAAiB,CAAC;IACjE,MAAM,OAAO,GAAG,IAAI,aAAa,CAAC,MAAM,EAAE,OAAO,CAAC,CAAC;AACrD,CAAC,CAAC;AALS,QAAA,IAAI,QAKb"}
