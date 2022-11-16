@@ -306,7 +306,9 @@ export class CrudRoutesFactory {
       });
     }
 
-    const modelType = SerializeHelper.createSimpleDto(this.modelType, this.modelName, joinTree);
+    const models = SerializeHelper.createJoinedResponseDto(this.modelType, this.modelName, joinTree);
+    const modelType = models.get;
+    this.swaggerModels = { ...this.swaggerModels, ...models };
     this.simpleModel = modelType;
     this.swaggerModels.get = modelType;
     this.swaggerModels.getMany = SerializeHelper.createGetManyDto(this.swaggerModels.get, this.modelName);

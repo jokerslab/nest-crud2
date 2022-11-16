@@ -43,7 +43,7 @@ export class SerializeHelper {
     return GetOneResponseDto;
   }
 
-  static createSimpleDto(dto: any, resourceName: string, joinTree: any): any {
+  static createJoinedResponseDto(dto: any, resourceName: string, joinTree: any): any {
     // Depth first search of nested object
 
     const objRelations = getMetadataArgsStorage().relations.filter((relation) => relation.target === dto);
@@ -56,6 +56,9 @@ export class SerializeHelper {
       value: `${resourceName}ResponseDto`,
     });
     // Strip out any relations
+    // create a object to hold the Classes
+
+    const models: any = {};
 
     // for any relations in the join options, add them to the dto
     const relatedKeys = Object.keys(joinTree);
@@ -67,7 +70,7 @@ export class SerializeHelper {
           writable: false,
           value: `${resourceName}${relatedKeys[0]}ResponseRelatedDto`,
         });
-        Swagger.setExtraModels({ get: RelatedResponseDto });
+        models[RelatedResponseDto['name']] = RelatedResponseDto;
 
         ApiPropertyProg(
           { type: RelatedResponseDto, required: false },
@@ -78,7 +81,7 @@ export class SerializeHelper {
         console.log('No relation found for ', relatedKeys[0]);
       }
     }
-
-    return SimpleResponseDto;
+    models.get = SimpleResponseDto;
+    return models;
   }
 }
