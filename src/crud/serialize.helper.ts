@@ -46,7 +46,10 @@ export class SerializeHelper {
   static createJoinedResponseDto(dto: any, resourceName: string, joinTree: any): any {
     // Depth first search of nested object
 
-    const objRelations = getMetadataArgsStorage().relations.filter((relation) => relation.target === dto);
+    const allRelations = getMetadataArgsStorage().relations;
+    const allTargets = [...new Set(allRelations.map((relation) => relation.target))];
+
+    const objRelations = allRelations.filter((relation) => relation.target === dto);
 
     const related: any = objRelations.map((relation) => relation.propertyName);
 
@@ -65,18 +68,23 @@ export class SerializeHelper {
     if (relatedKeys.length > 0) {
       const rel = objRelations.find((r) => r.propertyName === relatedKeys[0]);
       if (rel) {
-        const RelatedResponseDto = rel.type;
-        Object.defineProperty(RelatedResponseDto, 'name', {
-          writable: false,
-          value: `${resourceName}${relatedKeys[0]}ResponseRelatedDto`,
-        });
-        models[RelatedResponseDto['name']] = RelatedResponseDto;
+        const targetClass: any = allTargets.find((t: any) => t.name.toLowerCase() === relatedKeys[0]);
+        if (targetClass) {
+          class RelatedResponseDto extends targetClass {}
+          Object.defineProperty(RelatedResponseDto, 'name', {
+            writable: false,
+            value: `${resourceName}${relatedKeys[0]}ResponseRelatedDto`,
+          });
+          models[RelatedResponseDto['name']] = RelatedResponseDto;
 
-        ApiPropertyProg(
-          { type: RelatedResponseDto, required: false },
-          SimpleResponseDto.prototype,
-          relatedKeys[0] + 'jiggle',
-        );
+          ApiPropertyProg(
+            { type: RelatedResponseDto, required: false },
+            SimpleResponseDto.prototype,
+            relatedKeys[0] + 'jiggle',
+          );
+        } else {
+          console.log('targetClass not found', relatedKeys[0]);
+        }
       } else {
         console.log('No relation found for ', relatedKeys[0]);
       }
