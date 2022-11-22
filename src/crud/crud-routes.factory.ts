@@ -462,7 +462,7 @@ export class CrudRoutesFactory {
       R.setRouteArgsTypes([Object, bulkDto], this.targetProto, name);
     } else if (isIn(name, ['createOneBase', 'updateOneBase', 'replaceOneBase'])) {
       const action = this.routeNameAction(name);
-      const dto = this.options.dto[action] || this.simpleModel || this.modelType;
+      const dto = this.options.dto[action] || this.swaggerModels[`${action}Dto`] || this.simpleModel || this.modelType;
       R.setRouteArgsTypes([Object, dto], this.targetProto, name);
     } else {
       R.setRouteArgsTypes([Object], this.targetProto, name);

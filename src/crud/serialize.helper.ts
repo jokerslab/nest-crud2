@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { getMetadataArgsStorage } from 'typeorm';
-import { OmitType } from '@nestjs/swagger';
+import { OmitType, PartialType } from '@nestjs/swagger';
 import { GetManyDefaultResponse } from '../interfaces';
 import { ApiProperty, ApiPropertyProg, Swagger } from './swagger.helper';
 
@@ -86,7 +86,47 @@ export class SerializeHelper {
     };
 
     recursiveCreateDto(dto, resourceName, joinTree);
+    const createDto = SerializeHelper.createCreateDto(dto, resourceName);
+    class UpdateDto extends PartialType(createDto) {}
+    Object.defineProperty(UpdateDto, 'name', {
+      writable: false,
+      value: `Update${resourceName}Dto`,
+    });
+    models.createDto = createDto;
+    models.updateDto = UpdateDto;
     models.get = models[resourceName];
     return models;
+  }
+
+  // Create DTOs for creation and updates
+  // remove any of auto generated ['id', 'createdAt', 'updatedAt', 'archivedAt', 'version', 'createdBy', 'organizationId', 'lastUpdatedBy']
+  static createCreateDto(dto: any, resourceName: string, exclude: any[] = []): any {
+    const allRelations = getMetadataArgsStorage().relations;
+    const objRelations = allRelations.filter((relation) => relation.target === dto);
+
+    const related: any = objRelations.map((relation) => relation.propertyName);
+
+    const excludeList = [
+      'id',
+      'createdAt',
+      'updatedAt',
+      'archivedAt',
+      'version',
+      'createdBy',
+      'organizationId',
+      'lastUpdatedBy',
+      ...exclude,
+    ];
+
+    const omitList: any = [...related, ...excludeList];
+
+    class CreateDto extends OmitType(dto, omitList) {}
+
+    Object.defineProperty(CreateDto, 'name', {
+      writable: false,
+      value: `Create${resourceName}Dto`,
+    });
+
+    return CreateDto;
   }
 }

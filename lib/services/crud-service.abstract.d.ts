@@ -9,6 +9,7 @@ export declare abstract class CrudService<T> {
     getTake(query: ParsedRequestParams, options: QueryOptions): number | null;
     getSkip(query: ParsedRequestParams, take: number): number | null;
     getPrimaryParams(options: CrudRequestOptions): string[];
+    getPrimaryParam(options: CrudRequestOptions): string;
     abstract getMany(req: CrudRequest): Promise<GetManyDefaultResponse<T> | T[]>;
     abstract getOne(req: CrudRequest): Promise<T>;
     abstract createOne(req: CrudRequest, dto: T | Partial<T>): Promise<T>;

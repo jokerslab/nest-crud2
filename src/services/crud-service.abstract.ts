@@ -81,6 +81,21 @@ export abstract class CrudService<T> {
     return params.map((p) => options.params[p].field);
   }
 
+  /**
+   * Get primary param name from CrudOptions
+   * @param options
+   */
+  getPrimaryParam(options: CrudRequestOptions): string {
+    const param = objKeys(options.params).find((n) => options.params[n] && options.params[n].primary);
+
+    /* istanbul ignore if */
+    if (!param) {
+      return undefined;
+    }
+
+    return options.params[param].field;
+  }
+
   abstract getMany(req: CrudRequest): Promise<GetManyDefaultResponse<T> | T[]>;
 
   abstract getOne(req: CrudRequest): Promise<T>;
