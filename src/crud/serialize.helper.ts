@@ -76,7 +76,10 @@ export class SerializeHelper {
             const modelName = `${resourceName}Joined${relatedObjType.name}`;
             recursiveCreateDto(relatedObjType, modelName, joinTree[key]);
             // Add in the joined object to the api property
-            ApiPropertyProg({ type: models[modelName], required: false }, JoinedResponseDto.prototype, key);
+            ApiPropertyProg({ type: models[modelName],
+              required: false,
+              isArray:(relatedObj.relationType === 'one-to-many' || relatedObj.relationType === 'many-to-many')
+             }, JoinedResponseDto.prototype, key);
           }
         } else {
           // We did not find the join in the entity
